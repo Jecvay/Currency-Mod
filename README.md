@@ -32,9 +32,8 @@ Version 1.0
 Contact
 ---
 [![](https://img.shields.io/badge/CurseForge-Beardlessbrady-F26122.svg)](https://minecraft.curseforge.com/members/BeardlessBrady)
-[![](https://img.shields.io/badge/Discord-Beardlessbrady%232909-7289DA.svg)](https://discordapp.com/)
+[![](https://img.shields.io/badge/Disord-Beardlessbrady-blue.svg)](https://discord.gg/kSRXwZJ)
 [![](https://img.shields.io/badge/Twitter-__Beardlessbrady-1DA1F2.svg)](https://twitter.com/_BeardlessBrady)
-[![](https://img.shields.io/badge/-Patreon-orange.svg)](https://www.patreon.com/BeardlessBrady)
 
 ---
 
