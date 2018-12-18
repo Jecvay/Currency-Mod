@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 public class ItemColorCurrency implements IItemColor{
 
     @Override
-    public int colorMultiplier(ItemStack stack, int tintIndex) {
+    public int getColorFromItemstack(ItemStack stack, int tintIndex) {
         return 0x848920;
     }
 }
