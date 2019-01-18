@@ -514,58 +514,6 @@ public class ContainerVending extends Container implements INBTInventory {
         return totalOfCoin;
     }
 
-    private int getBillWorth(int itemDamage, int stackSize) {
-        int cash = 0;
-        switch (itemDamage) {
-            case 0:
-                cash = 100;
-                break;
-            case 1:
-                cash = 500;
-                break;
-            case 2:
-                cash = 1000;
-                break;
-            case 3:
-                cash = 2000;
-                break;
-            case 4:
-                cash = 5000;
-                break;
-            case 5:
-                cash = 10000;
-                break;
-        }
-
-        return cash * stackSize;
-    }
-
-    private int getCoinWorth(int itemDamage, int stackSize) {
-        int cash = 0;
-        switch (itemDamage) {
-            case 0:
-                cash = 1;
-                break;
-            case 1:
-                cash = 5;
-                break;
-            case 2:
-                cash = 10;
-                break;
-            case 3:
-                cash = 25;
-                break;
-            case 4:
-                cash = 100;
-                break;
-            case 5:
-                cash = 200;
-                break;
-        }
-
-        return cash * stackSize;
-    }
-
     private void sellToWallet(ItemStack wallet, int amountRemovable) {
         int amount = amountRemovable;
 
@@ -685,7 +633,7 @@ public class ContainerVending extends Container implements INBTInventory {
             for (int i = 0; i < itemHandler.getSlots(); i++) {
                 if (!itemHandler.getStackInSlot(i).isEmpty()) {
                     if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemBanknote) {
-                        int billWorth = getBillWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
+                        int billWorth = UtilMethods.getBillWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
                         if (billWorth > amount) {
                             itemDamage = itemHandler.getStackInSlot(i).getItemDamage() + 6;
                             if (itemHandler.getStackInSlot(i).getCount() == 1) {
@@ -696,7 +644,7 @@ public class ContainerVending extends Container implements INBTInventory {
                             break searchLoop;
                         }
                     } else if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
-                        int coinWorth = getCoinWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
+                        int coinWorth = UtilMethods.getCoinWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
                         System.out.println(coinWorth);
                         if (coinWorth > amount) {
                             itemDamage = itemHandler.getStackInSlot(i).getItemDamage();

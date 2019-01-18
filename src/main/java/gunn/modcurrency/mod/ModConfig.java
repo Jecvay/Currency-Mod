@@ -2,6 +2,9 @@ package gunn.modcurrency.mod;
 
 import gunn.modcurrency.mod.proxy.CommonProxy;
 import net.minecraftforge.common.config.Configuration;
+
+import java.util.List;
+
 import org.apache.logging.log4j.Level;
 
 /**
@@ -31,9 +34,8 @@ public class ModConfig {
     public static boolean invincibleVendSell = true;
     public static int walletSize = 4;
     public static boolean dropATM = false;
-    public static String[] billValueStrList = null;
-    public static String[] coinValueStrList = null;
-
+    public static List<Integer> billValueList = null;
+    public static List<Integer> coinValueList = null;
 
 
     public static void readConfig(){
@@ -75,7 +77,15 @@ public class ModConfig {
         invincibleVendSell = cfg.getBoolean("Invincible Machine", CATEGORY_GENERAL, invincibleVendSell, "Enabling this makes it so only the player who placed the machine can break it");
         walletSize = cfg.getInt("Wallet Size", CATEGORY_GENERAL, walletSize, 0, 4, "This changes how many rows of inventory slot there are in the wallet");
         textureType = cfg.getInt("Item Textures", CATEGORY_GENERAL, textureType, 0, 1,"Default=0, Foolcraft=1");
-        billValueStrList = cfg.getStringList("BillValueList", CATEGORY_GENERAL, new String[]{""}, "纸币价格表");
-        coinValueStrList = cfg.getStringList("CoinValueList", CATEGORY_GENERAL, new String[]{""}, "硬币价格表");
+        
+        String[] billValueStrList = cfg.getStringList("BillValueList", CATEGORY_GENERAL, new String[]{""}, "纸币价格表");
+        String[] coinValueStrList = cfg.getStringList("CoinValueList", CATEGORY_GENERAL, new String[]{""}, "硬币价格表");
+        
+        for(String s: billValueStrList) {
+            billValueList.add(Integer.valueOf(s));
+        }
+        for (String s: coinValueStrList) {
+            coinValueList.add(Integer.valueOf(s));
+        }
     }
 }

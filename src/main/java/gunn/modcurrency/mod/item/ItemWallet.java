@@ -13,10 +13,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
+import gunn.modcurrency.mod.utils.UtilMethods;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -76,57 +76,18 @@ public class ItemWallet extends Item{
     private int getTotalCash(ItemStackHandler itemStackHandler) {
         int totalCash = 0;
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemCoin)) {
-                switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                    case 0:
-                        totalCash = totalCash + itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 1:
-                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 2:
-                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 3:
-                        totalCash = totalCash + 25 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 4:
-                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 5:
-                        totalCash = totalCash + 200 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    default:
-                        totalCash = -1;
-                        break;
-                }
-            } else if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemBanknote)) {
-                switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                    case 0:
-                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 1:
-                        totalCash = totalCash + 500 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 2:
-                        totalCash = totalCash + 1000 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 3:
-                        totalCash = totalCash + 2000 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 4:
-                        totalCash = totalCash + 5000 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 5:
-                        totalCash = totalCash + 10000 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    default:
-                        totalCash = -1;
-                        break;
-                }
+            ItemStack itemStack = itemStackHandler.getStackInSlot(i);
+            Item item = itemStack.getItem();
+            if (item.equals(ModItems.itemCoin)) {
+                int itemDamage = itemStack.getItemDamage();
+                totalCash += UtilMethods.getCoinWorth(
+                        itemDamage, itemStack.getCount());
+            } else if (item.equals(ModItems.itemBanknote)) {
+                int itemDamage = itemStack.getItemDamage();
+                totalCash += UtilMethods.getBillWorth(
+                        itemDamage, itemStack.getCount());
             }
         }
         return totalCash;
-
     }
 }

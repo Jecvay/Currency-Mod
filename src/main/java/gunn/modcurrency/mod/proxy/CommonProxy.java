@@ -3,20 +3,15 @@ package gunn.modcurrency.mod.proxy;
 import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.block.ModBlocks;
-import gunn.modcurrency.mod.crafting.ModRecipes;
 import gunn.modcurrency.mod.handler.EventHandlerCommon;
 import gunn.modcurrency.mod.handler.GuiHandler;
 import gunn.modcurrency.mod.item.ModItems;
-import gunn.modcurrency.mod.network.PacketHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
 import java.io.File;
 
 /**

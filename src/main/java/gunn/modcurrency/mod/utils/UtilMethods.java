@@ -35,4 +35,56 @@ public final class UtilMethods {
 
         return finalTranslation;
     }
+
+    public static int getBillWorth(int itemDamage, int stackSize) {
+        int cash = 0;
+        switch (itemDamage) {
+            case 0:
+                cash = 100;
+                break;
+            case 1:
+                cash = 500;
+                break;
+            case 2:
+                cash = 1000;
+                break;
+            case 3:
+                cash = 2000;
+                break;
+            case 4:
+                cash = 5000;
+                break;
+            case 5:
+                cash = 10000;
+                break;
+        }
+
+        return cash * stackSize;
+    }
+
+    public static int getCoinWorth(int itemDamage, int stackSize) {
+        int cash = 0;
+        switch (itemDamage) {
+            case 0:
+                cash = 1;
+                break;
+            case 1:
+                cash = 5;
+                break;
+            case 2:
+                cash = 10;
+                break;
+            case 3:
+                cash = 25;
+                break;
+            case 4:
+                cash = 100;
+                break;
+            case 5:
+                cash = 200;
+                break;
+        }
+
+        return cash * stackSize;
+    }
 }
