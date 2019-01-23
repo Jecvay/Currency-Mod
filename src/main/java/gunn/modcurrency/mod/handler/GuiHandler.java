@@ -8,6 +8,7 @@ import gunn.modcurrency.mod.container.ContainerWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileATM;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
+import gunn.modcurrency.mod.tileentity.TileHydrometer;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -52,6 +53,12 @@ public class GuiHandler implements IGuiHandler{
             TileATM tileATM = (TileATM) tileEntity;
             return new ContainerATM(player, tileATM);
         }
+
+        if(tileEntity instanceof TileHydrometer && ID == 35){
+            TileHydrometer tileHydrometer = (TileHydrometer) tileEntity;
+            return new ContainerHydroMeter(player, tileHydrometer);
+        }
+
         return null;
     }
 
@@ -82,6 +89,12 @@ public class GuiHandler implements IGuiHandler{
         if(ID == 34 && player.inventory.getCurrentItem().getItem() == ModItems.itemGuide){
             return new GuiGuide(player.inventory.getCurrentItem());
         }
+
+        if(tileEntity instanceof TileHydrometer && ID == 35){
+            TileHydrometer tileHydrometer = (TileHydrometer) tileEntity;
+            return new GuiHydrometer(player, tileHydrometer);
+        }
+
         return null;
     }
 }

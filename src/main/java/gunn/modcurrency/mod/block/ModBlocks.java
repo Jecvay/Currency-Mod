@@ -19,12 +19,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
     public static BlockVending blockVending = new BlockVending();
     public static BlockExchanger blockExchanger = new BlockExchanger();
+    public static BlockHydrometer blockHydrometer = new BlockHydrometer();
     //public static BlockATM blockATM = new BlockATM();
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
         if(ModConfig.enableSeller) event.getRegistry().register(blockExchanger);
         if(ModConfig.enableVendor) event.getRegistry().register(blockVending);
+        event.getRegistry().register(blockHydrometer);
         //if(ModConfig.enableATM) event.getRegistry().register(blockATM);
     }
 
@@ -32,6 +34,7 @@ public class ModBlocks {
     public void registerItems(RegistryEvent.Register<Item> event){
         if(ModConfig.enableSeller) event.getRegistry().register(new ItemBlock(blockExchanger).setRegistryName(blockExchanger.getRegistryName()));
         if(ModConfig.enableVendor) event.getRegistry().register(new ItemBlock(blockVending).setRegistryName(blockVending.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(blockHydrometer).setRegistryName(blockHydrometer.getRegistryName()));
        // if(ModConfig.enableATM) event.getRegistry().register(new ItemBlock(blockATM).setRegistryName(blockATM.getRegistryName()));
     }
 
@@ -40,6 +43,7 @@ public class ModBlocks {
     public void registerModels(ModelRegistryEvent event){
         if(ModConfig.enableSeller) blockExchanger.initModel();
         if(ModConfig.enableVendor) blockVending.initModel();
+        blockHydrometer.initModel();
         //if(ModConfig.enableATM) blockATM.initModel();
     }
 
