@@ -6,8 +6,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
 
@@ -20,12 +27,14 @@ import javax.annotation.Nullable;
  * File Created 2019-01-22
  */
 
-public class TileHydrometer extends TileEntity implements IOwnable {
+public class TileHydrometer extends TileEntity implements IOwnable, ICapabilityProvider, ITickable {
     private EntityPlayer playerUsing = null;
     private String owner;
     boolean isOwner;
+    private EnergyStorage energyCapability;
 
     public TileHydrometer(){
+        energyCapability = new EnergyStorage(1000);
         owner = "";
         isOwner = true;
     }
@@ -35,12 +44,25 @@ public class TileHydrometer extends TileEntity implements IOwnable {
         playerUsing = player;
     }
 
+    @Override
+    public void update() {
+        if(!this.world.isRemote){
+            if(world.getTileEntity(getPos().down()) != null){
+                TileEntity consumer = world.getTileEntity(getPos().down());
+                if(consumer.hasCapability(CapabilityEnergy.ENERGY, EnumFacing.UP)){
+                    IEnergyStorage conEnergy = consumer.getCapability(CapabilityEnergy.ENERGY, EnumFacing.UP);
+
+                    energyCapability.extractEnergy(conEnergy.receiveEnergy(100, false), false);
+                }
+            }
+        }
+    }
+
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString("owner", owner);
-
         return compound;
     }
 
@@ -70,6 +92,30 @@ public class TileHydrometer extends TileEntity implements IOwnable {
         owner = pkt.getNbtCompound().getString("owner");
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="ItemStackHandler Methods--------------------------------------------------------------------------------------------">
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            if(facing != null) {
+                return true;
+            }
+            return false;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            if(facing != null){
+                return (T) energyCapability;
+            }else return null;
+        }
+        return super.getCapability(capability, facing);
+    }
     //</editor-fold>
 
     public int getFieldCount(){

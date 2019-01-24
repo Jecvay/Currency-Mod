@@ -2,14 +2,13 @@ package gunn.modcurrency.mod.tileentity;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.container.util.INBTInventory;
-import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
+import gunn.modcurrency.mod.capabilities.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.network.PacketUpdateAllSizesToClient;
-import gunn.modcurrency.mod.network.PacketUpdateSizeToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,10 +32,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import scala.Int;
 
 import javax.annotation.Nullable;
-import java.util.ListIterator;
 
 /**
  * Distributed with the Currency-Mod for Minecraft

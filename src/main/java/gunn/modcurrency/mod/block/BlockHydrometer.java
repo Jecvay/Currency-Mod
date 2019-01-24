@@ -58,7 +58,6 @@ public class BlockHydrometer extends Block implements ITileEntityProvider {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             if (getTile(world, pos).getPlayerUsing() == null && UUID.fromString(getTile(world, pos).getOwner()).equals(UUID.fromString(player.getUniqueID().toString()))) {
-                System.out.println("DDE");
                 getTile(world, pos).openGui(player, world, pos);
                 return true;
             }

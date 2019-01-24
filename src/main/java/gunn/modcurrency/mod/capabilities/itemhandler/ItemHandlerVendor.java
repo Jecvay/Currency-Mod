@@ -1,4 +1,4 @@
-package gunn.modcurrency.mod.container.itemhandler;
+package gunn.modcurrency.mod.capabilities.itemhandler;
 
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketUpdateSizeToClient;
