@@ -1,4 +1,4 @@
-package gunn.modcurrency.mod.container.itemhandler;
+package gunn.modcurrency.mod.capabilities.itemhandler;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -6,8 +6,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
