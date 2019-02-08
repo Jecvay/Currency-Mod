@@ -9,6 +9,7 @@ import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.network.PacketUpdateFufilledRequestToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
+import gunn.modcurrency.mod.ModConfig;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -109,28 +110,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                     if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                         int amount;
-                        switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
-                            case 0:
-                                amount = 100;
-                                break;
-                            case 1:
-                                amount = 500;
-                                break;
-                            case 2:
-                                amount = 1000;
-                                break;
-                            case 3:
-                                amount = 2000;
-                                break;
-                            case 4:
-                                amount = 5000;
-                                break;
-                            case 5:
-                                amount = 10000;
-                                break;
-                            default:
-                                amount = -1;
-                                break;
+                        int subId = automationInputStackHandler.getStackInSlot(0).getItemDamage();
+                        if (0 <= subId && subId <= 5) {
+                            amount = ModConfig.billValueList.get(subId);
+                        } else {
+                            amount = -1;
                         }
                         amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
                         automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
@@ -143,28 +127,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                         }
                     } else if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCoin)) {
                         int amount;
-                        switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
-                            case 0:
-                                amount = 1;
-                                break;
-                            case 1:
-                                amount = 5;
-                                break;
-                            case 2:
-                                amount = 10;
-                                break;
-                            case 3:
-                                amount = 25;
-                                break;
-                            case 4:
-                                amount = 100;
-                                break;
-                            case 5:
-                                amount = 200;
-                                break;
-                            default:
-                                amount = -1;
-                                break;
+                        int subId = automationInputStackHandler.getStackInSlot(0).getItemDamage();
+                        if (0 <= subId && subId <= 5) {
+                            amount = ModConfig.coinValueList.get(subId);
+                        } else {
+                            amount = -1;
                         }
                         amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
                         automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
@@ -267,28 +234,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                     if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
                         if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                             int amount;
-                            switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
-                                case 0:
-                                    amount = 100;
-                                    break;
-                                case 1:
-                                    amount = 500;
-                                    break;
-                                case 2:
-                                    amount = 1000;
-                                    break;
-                                case 3:
-                                    amount = 2000;
-                                    break;
-                                case 4:
-                                    amount = 5000;
-                                    break;
-                                case 5:
-                                    amount = 10000;
-                                    break;
-                                default:
-                                    amount = -1;
-                                    break;
+                            int subId = inputStackHandler.getStackInSlot(0).getItemDamage();
+                            if (0 <= subId && subId <= 5) {
+                                amount = ModConfig.billValueList.get(subId);
+                            } else {
+                                amount = -1;
                             }
                             amount = amount * inputStackHandler.getStackInSlot(0).getCount();
                             inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
@@ -299,30 +249,13 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                 pack.setData(getPos(), LONG_CASHREG, cashRegister);
                                 PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                             }
-                        }else  if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCoin)) {
+                        } else if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCoin)) {
                             int amount;
-                            switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
-                                case 0:
-                                    amount = 1;
-                                    break;
-                                case 1:
-                                    amount = 5;
-                                    break;
-                                case 2:
-                                    amount = 10;
-                                    break;
-                                case 3:
-                                    amount = 25;
-                                    break;
-                                case 4:
-                                    amount = 100;
-                                    break;
-                                case 5:
-                                    amount = 200;
-                                    break;
-                                default:
-                                    amount = -1;
-                                    break;
+                            int subId = inputStackHandler.getStackInSlot(0).getItemDamage();
+                            if (0 <= subId && subId <= 5) {
+                                amount = ModConfig.coinValueList.get(subId);
+                            } else {
+                                amount = -1;
                             }
                             amount = amount * inputStackHandler.getStackInSlot(0).getCount();
                             inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
@@ -369,45 +302,27 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (mode) amount = cashRegister;
 
         int[] dollarOut = new int[6];
-        dollarOut[5] = Math.round(amount / 10000);
-        amount = amount - (dollarOut[5] * 10000);
-
-        dollarOut[4] = Math.round(amount / 5000);
-        amount = amount - (dollarOut[4] * 5000);
-
-        dollarOut[3] = Math.round(amount / 2000);
-        amount = amount - (dollarOut[3] * 2000);
-
-        dollarOut[2] = Math.round(amount / 1000);
-        amount = amount - (dollarOut[2] * 1000);
-
-        dollarOut[1] = Math.round(amount / 500);
-        amount = amount - (dollarOut[1] * 500);
-
+        for(int i = 5; i > 0; i--) {
+            int billValue = ModConfig.billValueList.get(i);
+            dollarOut[i] = Math.round(amount / billValue);
+            amount = amount - (dollarOut[i] * billValue);
+        }
         dollarOut[0] = 0;
 
         int[] coinOut = new int[6];
-        coinOut[5] = Math.round(amount / 200);
-        amount = amount - (coinOut[5] * 200);
-
-        coinOut[4] = Math.round(amount / 100);
-        amount = amount - (coinOut[4] * 100);
-
-        coinOut[3] = Math.round(amount / 25);
-        amount = amount - (coinOut[3] * 25);
-
-        coinOut[2] = Math.round(amount / 10);
-        amount = amount - (coinOut[2] * 10);
-
-        coinOut[1] = Math.round(amount / 5);
-        amount = amount - (coinOut[1] * 5);
-
+        for(int i = 5; i > 0; i--) {
+            int coinValue = ModConfig.coinValueList.get(i);
+            coinOut[i] = Math.round(amount / coinValue);
+            amount = amount - (coinOut[i] * coinValue);
+        }
         coinOut[0] = Math.round(amount);
 
         if (!world.isRemote) {
-            if (mode){
+            if (mode) {
                 cashRegister = 0;
-            }else bank = 0;
+            } else {
+                bank = 0;
+            }
 
             for(int i = 0; i < dollarOut.length + coinOut.length; i++){
                 ItemStack item;

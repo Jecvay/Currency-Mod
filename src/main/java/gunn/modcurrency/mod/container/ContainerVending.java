@@ -1,5 +1,6 @@
 package gunn.modcurrency.mod.container;
 
+import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
 import gunn.modcurrency.mod.container.util.INBTInventory;
@@ -16,6 +17,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -517,66 +519,21 @@ public class ContainerVending extends Container implements INBTInventory {
     private void sellToWallet(ItemStack wallet, int amountRemovable) {
         int amount = amountRemovable;
 
-        int five = getTotalOfBill(wallet, 1);
-        int ten = getTotalOfBill(wallet, 2);
-        int twenty = getTotalOfBill(wallet, 3);
-        int fifty = getTotalOfBill(wallet, 4);
-        int hundo = getTotalOfBill(wallet, 5);
-
         int[] out = new int[6];
-
-        out[5] = Math.round(amount / 10000);
-        while (out[5] > hundo) out[5]--;
-        amount = amount - (out[5] * 10000);
-
-        out[4] = Math.round(amount / 5000);
-        while (out[4] > fifty) out[4]--;
-        amount = amount - (out[4] * 5000);
-
-        out[3] = Math.round(amount / 2000);
-        while (out[3] > twenty) out[3]--;
-        amount = amount - (out[3] * 2000);
-
-        out[2] = Math.round(amount / 1000);
-        while (out[2] > ten) out[2]--;
-        amount = amount - (out[2] * 1000);
-
-        out[1] = Math.round(amount / 500);
-        while (out[1] > five) out[1]--;
-        amount = amount - (out[1] * 500);
-
-        int oneCent = getTotalOfCoin(wallet, 0);
-        int fiveCent = getTotalOfCoin(wallet, 1);
-        int tenCent = getTotalOfCoin(wallet, 2);
-        int twentyFiveCent = getTotalOfCoin(wallet, 3);
-        int oneDollar = getTotalOfCoin(wallet, 4);
-        int twoDollar = getTotalOfCoin(wallet, 5);
+        for(int i = 5; i > 0; i--) {
+            int billValue = ModConfig.billValueList.get(i);
+            out[i] = amount / billValue;
+            amount = amount - (out[i] * billValue);
+        }
+        out[0] = 0;
 
         int[] outCoin = new int[6];
-
-        outCoin[5] = Math.round(amount / 200);
-        while (outCoin[5] > twoDollar) outCoin[5]--;
-        amount = amount - (outCoin[5] * 200);
-
-        outCoin[4] = Math.round(amount / 100);
-        while (outCoin[4] > oneDollar) outCoin[4]--;
-        amount = amount - (outCoin[4] * 100);
-
-        outCoin[3] = Math.round(amount / 25);
-        while (outCoin[3] > twentyFiveCent) outCoin[3]--;
-        amount = amount - (outCoin[3] * 25);
-
-        outCoin[2] = Math.round(amount / 10);
-        while (outCoin[2] > tenCent) outCoin[2]--;
-        amount = amount - (outCoin[2] * 10);
-
-        outCoin[1] = Math.round(amount / 5);
-        while (outCoin[1] > fiveCent) outCoin[1]--;
-        amount = amount - (outCoin[1] * 5);
-
-        outCoin[0] = Math.round(amount / 1);
-        while (outCoin[0] > oneCent) outCoin[0]--;
-        amount = amount - (outCoin[0] * 1);
+        for(int i = 5; i > 0; i--) {
+            int coinValue = ModConfig.coinValueList.get(i);
+            outCoin[i] = amount / coinValue;
+            amount = amount - (outCoin[i] * coinValue);
+        }
+        outCoin[0] = Math.round(amount);
 
         ItemStackHandler itemHandler = readInventoryTag(wallet, ItemWallet.WALLET_TOTAL_COUNT);
 
@@ -613,10 +570,6 @@ public class ContainerVending extends Container implements INBTInventory {
                             }
                         }
                     }
-
-
-
-
 
                     if (stack.getCount() == 0) itemHandler.setStackInSlot(j, ItemStack.EMPTY);  //Removes stack is 0
                 }
@@ -660,45 +613,18 @@ public class ContainerVending extends Container implements INBTInventory {
             }
 
             //Calculates change by deducting the bills/coins worth with the amount deductible that was left
-            int change = 0;
-            switch (itemDamage) {
-                case 0:
-                    change = 0;
-                    break;
-                case 1:
-                    change = 5 - amount;
-                    break;
-                case 2:
-                    change = 10 - amount;
-                    break;
-                case 3:
-                    change = 25 - amount;
-                    break;
-                case 4:
-                    change = 100 - amount;
-                    break;
-                case 5:
-                    change = 200 - amount;
-                    break;
-                case 6:
-                    change = 100 - amount;
-                    break;
-                case 7:
-                    change = 500 - amount;
-                    break;
-                case 8:
-                    change = 1000 - amount;
-                    break;
-                case 9:
-                    change = 2000 - amount;
-                    break;
-                case 10:
-                    change = 5000 - amount;
-                    break;
-                case 11:
-                    change = 10000 - amount;
-                    break;
+            int value = 0;
+            if (0 <= itemDamage && itemDamage <= 5) {
+                value = ModConfig.coinValueList.get(itemDamage);
+            } else if (6 <= itemDamage && itemDamage <= 11) {
+                value = ModConfig.billValueList.get(itemDamage);
             }
+
+            int change = 0;
+            if (1 <= itemDamage && itemDamage <= 11) {
+                change = value - amount;
+            }
+
             //Adds change to the bank variable in vendor
             tile.setLong(tile.LONG_BANK, tile.getLong(tile.LONG_BANK) + change);
         }

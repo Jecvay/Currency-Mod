@@ -7,6 +7,7 @@ import gunn.modcurrency.mod.worldsaveddata.bank.BankAccountSavedData;
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketSyncBankDataToClient;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.ModConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -59,34 +60,20 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
         if (moneySlot.getStackInSlot(0) == ItemStack.EMPTY) {
             BankAccountSavedData bankData = BankAccountSavedData.getData(getWorld());
             BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
-            if (amount <= account.getBalance() - this.fee && amount <= 6400) {
+            if (amount + this.fee <= account.getBalance() && amount <= 6400) {
                 ItemStack cash = new ItemStack(ModItems.itemBanknote);
 
-                if (amount % 100 == 0) {
-                    cash.setCount(amount / 100);
-                    cash.setItemDamage(5);
-                    moneySlot.setStackInSlot(0, cash);
-                }else if (amount % 50 == 0) {
-                    cash.setCount(amount / 50);
-                    cash.setItemDamage(4);
-                    moneySlot.setStackInSlot(0, cash);
-                }else if (amount % 20 == 0) {
-                    cash.setCount(amount / 20);
-                    cash.setItemDamage(3);
-                    moneySlot.setStackInSlot(0, cash);
-                }else if (amount % 10 == 0) {
-                    cash.setCount(amount / 10);
-                    cash.setItemDamage(2);
-                    moneySlot.setStackInSlot(0, cash);
-                }else if (amount % 5 == 0) {
-                    cash.setCount(amount / 5);
-                    cash.setItemDamage(1);
-                    moneySlot.setStackInSlot(0, cash);
-                }else{
-                    cash.setCount(amount);
-                    cash.setItemDamage(0);
-                    moneySlot.setStackInSlot(0, cash);
+                // TODO: 这又是啥
+                for (int i = 5; i >= 0; i--) {
+                    int value = ModConfig.coinValueList.get(i);
+                    if (amount % value == 0) {
+                        cash.setCount(amount / value);
+                        cash.setItemDamage(i);
+                        moneySlot.setStackInSlot(0, cash);
+                        break;
+                    }
                 }
+
                 account.setBalance(account.getBalance() - amount - this.fee);
                 payOwner(this.fee);
                 syncBankAccountData(account);
@@ -97,31 +84,18 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public void deposit() {
         if (!world.isRemote) {
             if (moneySlot.getStackInSlot(0) != ItemStack.EMPTY) {
+                // 我觉得这里好像错了, banknote 对应的怎么是 coin 的数值
                 if (moneySlot.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                     int amount;
-                    switch (moneySlot.getStackInSlot(0).getItemDamage()) {
-                        case 0:
-                            amount = 1;
-                            break;
-                        case 1:
-                            amount = 5;
-                            break;
-                        case 2:
-                            amount = 10;
-                            break;
-                        case 3:
-                            amount = 20;
-                            break;
-                        case 4:
-                            amount = 50;
-                            break;
-                        case 5:
-                            amount = 100;
-                            break;
-                        default:
-                            amount = -1;
-                            break;
+
+                    // import gunn.modcurrency.mod.ModConfig;
+                    int subId = moneySlot.getStackInSlot(0).getItemDamage();
+                    if (0 <= subId && subId <= 5) {
+                        amount = ModConfig.coinValueList.get(subId);
+                    } else {
+                        amount = -1;
                     }
+                    
                     amount = amount * moneySlot.getStackInSlot(0).getCount();
                     if(amount - this.fee >= 1 || isOwner) {
                         moneySlot.setStackInSlot(0, ItemStack.EMPTY);

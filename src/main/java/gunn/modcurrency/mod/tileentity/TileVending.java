@@ -10,6 +10,7 @@ import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.network.PacketUpdateAllSizesToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
+import gunn.modcurrency.mod.ModConfig;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -128,28 +129,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                         //<editor-fold desc="Banknote Update">
                         int amount;
-                        switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
-                            case 0:
-                                amount = 100;
-                                break;
-                            case 1:
-                                amount = 500;
-                                break;
-                            case 2:
-                                amount = 1000;
-                                break;
-                            case 3:
-                                amount = 2000;
-                                break;
-                            case 4:
-                                amount = 5000;
-                                break;
-                            case 5:
-                                amount = 10000;
-                                break;
-                            default:
-                                amount = -1;
-                                break;
+                        int subId = inputStackHandler.getStackInSlot(0).getItemDamage();
+                        if (0 <= subId && subId <= 5) {
+                            amount = ModConfig.billValueList.get(subId);
+                        } else {
+                            amount = -1;
                         }
                         amount = amount * inputStackHandler.getStackInSlot(0).getCount();
                         inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
@@ -164,28 +148,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                         //</editor-fold>
                     } else if(inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemCoin){
                         long amount;
-                        switch(inputStackHandler.getStackInSlot(0).getItemDamage()) {
-                            case 0:
-                                amount = 1;
-                                break;
-                            case 1:
-                                amount = 5;
-                                break;
-                            case 2:
-                                amount = 10;
-                                break;
-                            case 3:
-                                amount = 25;
-                                break;
-                            case 4:
-                                amount = 100;
-                                break;
-                            case 5:
-                                amount = 200;
-                                break;
-                            default:
-                                amount = -1;
-                                break;
+                        int subId = inputStackHandler.getStackInSlot(0).getItemDamage();
+                        if (0 <= subId && subId <= 5) {
+                            amount = ModConfig.coinValueList.get(subId);
+                        } else {
+                            amount = -1;
                         }
                         amount = amount * inputStackHandler.getStackInSlot(0).getCount();
                         inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
@@ -319,22 +286,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 10.0F, false);
     }
 
-    //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
-    public int getCashConversion(int meta){
-        switch(meta){
-            case 0: return 1;
-            case 1: return 5;
-            case 2: return 10;
-            case 3: return 25;
-            case 4: return 100;
-            case 5: return 200;
-            case 6: return 500;
-            case 7: return 1000;
-            case 8: return 2000;
-            case 9: return 5000;
-            case 10: return 10000;
+    public int getCashConversion(int meta) {
+        // TODO: 可能有问题
+        if (0 <= meta && meta <= 5) {
+            return ModConfig.coinValueList.get(meta);
+        } else if (6 <= meta && meta <= 11) {
+            return ModConfig.billValueList.get(meta - 6);
+        } else {
+            return -1;
         }
-        return -1;
     }
 
     private int getTotalCash(){
@@ -345,52 +305,20 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             int totalCash = 0;
             for (int i = 0; i < itemStackHandler.getSlots(); i++) {
                 if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemCoin)) {
-                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                        case 0:
-                            totalCash = totalCash + itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 1:
-                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 2:
-                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 3:
-                            totalCash = totalCash + 25 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 4:
-                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 5:
-                            totalCash = totalCash + 200 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        default:
-                            totalCash = -1;
-                            break;
+                    int subId = itemStackHandler.getStackInSlot(i).getItemDamage();
+                    if (0 <= subId && subId <= 5) {
+                        int cash = ModConfig.coinValueList.get(subId);
+                        totalCash = totalCash + cash * itemStackHandler.getStackInSlot(i).getCount();
+                    } else {
+                        totalCash = -1;
                     }
-                }else  if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemBanknote)) {
-                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                        case 0:
-                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 1:
-                            totalCash = totalCash + 500 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 2:
-                            totalCash = totalCash + 1000 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 3:
-                            totalCash = totalCash + 2000 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 4:
-                            totalCash = totalCash + 5000 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 5:
-                            totalCash = totalCash + 10000 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        default:
-                            totalCash = -1;
-                            break;
+                } else if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemBanknote)) {
+                    int subId = itemStackHandler.getStackInSlot(i).getItemDamage();
+                    if (0 <= subId && subId <= 5) {
+                        int cash = ModConfig.billValueList.get(subId);
+                        totalCash = totalCash + cash * itemStackHandler.getStackInSlot(i).getCount();
+                    } else {
+                        totalCash = -1;
                     }
                 }
             }
@@ -411,39 +339,19 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (mode) amount = profit;
 
         int[] dollarOut = new int[6];
-        dollarOut[5] = Math.round(amount / 10000);
-        amount = amount - (dollarOut[5] * 10000);
-
-        dollarOut[4] = Math.round(amount / 5000);
-        amount = amount - (dollarOut[4] * 5000);
-
-        dollarOut[3] = Math.round(amount / 2000);
-        amount = amount - (dollarOut[3] * 2000);
-
-        dollarOut[2] = Math.round(amount / 1000);
-        amount = amount - (dollarOut[2] * 1000);
-
-        dollarOut[1] = Math.round(amount / 500);
-        amount = amount - (dollarOut[1] * 500);
-
+        for(int i = 5; i > 0; i--) {
+            int billValue = ModConfig.billValueList.get(i);
+            dollarOut[i] = Math.round(amount / billValue);
+            amount = amount - (dollarOut[i] * billValue);
+        }
         dollarOut[0] = 0;
 
         int[] coinOut = new int[6];
-        coinOut[5] = Math.round(amount / 200);
-        amount = amount - (coinOut[5] * 200);
-
-        coinOut[4] = Math.round(amount / 100);
-        amount = amount - (coinOut[4] * 100);
-
-        coinOut[3] = Math.round(amount / 25);
-        amount = amount - (coinOut[3] * 25);
-
-        coinOut[2] = Math.round(amount / 10);
-        amount = amount - (coinOut[2] * 10);
-
-        coinOut[1] = Math.round(amount / 5);
-        amount = amount - (coinOut[1] * 5);
-
+        for(int i = 5; i > 0; i--) {
+            int coinValue = ModConfig.coinValueList.get(i);
+            coinOut[i] = Math.round(amount / coinValue);
+            amount = amount - (coinOut[i] * coinValue);
+        }
         coinOut[0] = Math.round(amount);
 
         if (!world.isRemote) {
